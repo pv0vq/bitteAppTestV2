@@ -1,5 +1,11 @@
 package com.example.myapplication
 
+import android.content.Context
+import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Rect
+import android.graphics.drawable.Drawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.PersistableBundle
@@ -11,11 +17,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.SearchView
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -31,7 +40,8 @@ class MainActivity : AppCompatActivity() {
     class MyFragmentPagerAdapter(activity: FragmentActivity): FragmentStateAdapter(activity){
         val fragments: List<Fragment>
         init {
-            fragments = listOf(OneFragment(),TwoFragment(), ThreeFragment() )
+            fragments = listOf(OneFragment(), TwoFragment(),ThreeFragment()
+            )
         }
 
         override fun getItemCount(): Int = fragments.size
@@ -45,9 +55,13 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
 
-        //
+        // 드로어 레이아웃과 토클 버튼 연동
+        // 토글 레이아웃 연동
         toggle = ActionBarDrawerToggle(this, binding.drawer, R.string.drawer_opened,
             R.string.drawer_closed)
+        // 업버튼 호출 여부
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        // 업버튼을 토글버튼으로 변환
         toggle.syncState()
 
 
@@ -60,8 +74,7 @@ class MainActivity : AppCompatActivity() {
 //        transient.commit()
 
 
-        // 업버튼 호출 여부
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
 
         val adapter = MyFragmentPagerAdapter(this)
         binding.viewpager.adapter = adapter
@@ -104,17 +117,70 @@ class MainActivity : AppCompatActivity() {
 
         // 뷰 홀더의 뷰에 데이터를 출력하려고 자동으로 호출
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+            Log.d("리스트 아이템", "리스트 아아템 클릭 시")
             val binding = (holder as MyViewHolder).binding
             // 뷰 데이터 출력
             binding.itemData.text = datas[position]
 
+            // 아이템 클릭 이벤트
             binding.itemRoot.setOnClickListener{
-                Log.d("리스트 아이템", "리스트 아아템 클릭 시")
+                Log.d("리스트 아이템", "리스트 아아템 클릭 시1")
             }
 
         }
 
     }
+
+    // 아이템 데커레이션
+    // 리사이클 뷰를 꾸밀 경우 사용한다.
+    class MyDecoration(val context: Context): RecyclerView.ItemDecoration () {
+        // 항목이 배치되기 전에 호출
+        override fun onDraw(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
+            super.onDraw(c, parent, state)
+//            c.drawBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher_background),0f,0f,null)
+        }
+
+        // 항목이 모두 배치된 이후 호출
+        override fun onDrawOver(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
+            super.onDrawOver(c, parent, state)
+
+//            // 뷰 크기 계산
+            val width = parent.width
+            val height = parent.height
+
+            // 이미지 크기 계산
+            // 리스트 뒤에 배경 화면
+//            val dr: Drawable? = ResourcesCompat.getDrawable(context.resources, R.drawable.kbo, null)
+//            val drWidth = dr?.intrinsicWidth
+//            val drHeight = dr?.intrinsicHeight
+//
+//            // 이미지가 그려질 위치 계싼
+//            val left = width/2 - drWidth?.div(2) as Int
+//            val top = height/2 - drHeight?.div(2) as Int
+//
+//            c.drawBitmap(BitmapFactory.decodeResource(context.resources, R.drawable.kbo),
+//                left.toFloat(), top.toFloat(), null)
+        }
+
+        // 개별 항목을 꾸밀 떄 호출
+        override fun getItemOffsets(
+            outRect: Rect,
+            view: View,
+            parent: RecyclerView,
+            state: RecyclerView.State
+        ) {
+            super.getItemOffsets(outRect, view, parent, state)
+            val index = parent.getChildAdapterPosition(view)+1
+            if(index % 3 == 0)
+                outRect.set(10, 10, 10, 60)
+            else
+                outRect.set(10, 10, 10, 0)
+
+            view.setBackgroundColor(Color.parseColor("#FFFFFF"))
+            ViewCompat.setElevation(view, 20.0f)
+        }
+    }
+
     // 프래그먼트 객체
     // 리스트
     class OneFragment: Fragment () {
@@ -133,18 +199,19 @@ class MainActivity : AppCompatActivity() {
                 dates.add("item ${i}")
             }
             // 항목 배치
-            binding.recyclerView.layoutManager = LinearLayoutManager(activity)
+             binding.recyclerView.layoutManager = LinearLayoutManager(activity)
+            // binding.recyclerView.layoutManager = GridLayoutManager(activity, 3)
             // 항목 구성 (데이터)
             binding.recyclerView.adapter = MyAdapter(dates)
             binding.recyclerView.addItemDecoration(DividerItemDecoration(activity, LinearLayoutManager.VERTICAL))
-
+            // 아이템 테커레이션
+            binding.recyclerView.addItemDecoration(MyDecoration(activity as Context))
             return  binding.root
         }
  }
 
     class TwoFragment: Fragment () {
-        // 늦은 초기화
-        lateinit var binding: FragmentTestBinding
+
         override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
@@ -155,8 +222,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     class ThreeFragment: Fragment () {
-        // 늦은 초기화
-        lateinit var binding: FragmentTestBinding
+
         override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
@@ -210,7 +276,10 @@ class MainActivity : AppCompatActivity() {
 //        else -> super.onOptionsItemSelected(item)
 //    }
 
+
+    // 토글 버튼 및 드로어
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // 토클 버튼을 클릭 시 이벤트
         if(toggle.onOptionsItemSelected(item)){
             return true
         }

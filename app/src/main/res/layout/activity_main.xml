@@ -20,12 +20,26 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
     </LinearLayout>
+    <!-- 드로어 레이아웃 -->
+    <TextView
+        android:layout_width="300dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="#FF0000"
+        android:fitsSystemWindows="true"
+        android:gravity="center_horizontal"
+        android:text="I am Drawer"
+        android:textColor="#FFFFFF"
+        android:textSize="20dp"
+        android:textStyle="bold"/>
 
     <LinearLayout
         android:id="@+id/fragment_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+       >
+
     </LinearLayout>
 
 
