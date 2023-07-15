@@ -246,15 +246,20 @@ class MainActivity : AppCompatActivity() {
 //        val menuItem2: MenuItem? = menu?.add(0,1,0, "메뉴1")
 //        return super.onCreateOptionsMenu(menu)
 
+        // menuItem 객체 생성
         val menuItem = menu?.findItem(R.id.menu_search)
         val searchView = menuItem?.actionView as SearchView
+        // 검색 메뉴 이벤트
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
             override fun onQueryTextChange(newText: String?): Boolean {
+                // 검색어 변경 이벤트
+                Log.d("검색어 이벤트", "search text(change): $newText")
                 return true
             }
 
             override fun onQueryTextSubmit(query: String?): Boolean {
-                Log.d("kkang", "search text: $query")
+                // 검색어 submit 이벤트
+                Log.d("검색어 이벤트", "search text(submit): $query")
                 return true
             }
         })
@@ -277,7 +282,7 @@ class MainActivity : AppCompatActivity() {
 //    }
 
 
-    // 토글 버튼 및 드로어
+    // 토글 버튼 및 드로습
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // 토클 버튼을 클릭 시 이벤트
         if(toggle.onOptionsItemSelected(item)){
