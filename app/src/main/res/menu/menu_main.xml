@@ -12,11 +12,9 @@
 
         />
     <item
-        android:id="@+id/menu3"
-        android:title="menu3"
-        android:icon="@android:drawable/ic_menu_search"
-        app:showAsAction="ifRoom"
-        app:actionViewClass="android.widget.SearchView"
-        />
+        android:id="@+id/menu_search"
+        android:title="search"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        app:showAsAction="always"/>
 
 </menu>
