@@ -32,6 +32,7 @@ import com.example.myapplication.databinding.ActivityMainBinding
 import com.example.myapplication.databinding.FragmentOneBinding
 import com.example.myapplication.databinding.FragmentTestBinding
 import com.example.myapplication.databinding.ItemMainBinding
+import com.google.android.material.tabs.TabLayoutMediator
 
 class MainActivity : AppCompatActivity() {
 
@@ -74,10 +75,14 @@ class MainActivity : AppCompatActivity() {
 //        transient.commit()
 
 
-
-
         val adapter = MyFragmentPagerAdapter(this)
         binding.viewpager.adapter = adapter
+
+
+        // tap 선언
+        TabLayoutMediator(binding.tabs, binding.viewpager){ tab, position ->
+            tab.text = "Tab${(position + 1)}"
+        }.attach()
 
     }
 
