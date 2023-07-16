@@ -84,6 +84,11 @@ class MainActivity : AppCompatActivity() {
             tab.text = "Tab${(position + 1)}"
         }.attach()
 
+        // 드로우 네비게이션 이벤트
+        binding.mainDrawerView.setNavigationItemSelectedListener {
+            Log.d("네비게이션", "네비게이션 : ${it.title}")
+           true
+        }
     }
 
 //    class RecyclerViewActivity : AppCompatActivity () {
