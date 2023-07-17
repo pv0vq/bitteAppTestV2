@@ -1,6 +1,8 @@
 package com.example.myapplication
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Color
@@ -15,6 +17,10 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.TextView
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.res.ResourcesCompat
@@ -37,6 +43,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 class MainActivity : AppCompatActivity() {
 
     lateinit var toggle: ActionBarDrawerToggle
+
     //프래그먼트 스와이프
     class MyFragmentPagerAdapter(activity: FragmentActivity): FragmentStateAdapter(activity){
         val fragments: List<Fragment>
@@ -233,13 +240,45 @@ class MainActivity : AppCompatActivity() {
 
     class ThreeFragment: Fragment () {
 
+        private lateinit var text: TextView
+        private lateinit var requestLauncher: ActivityResultLauncher<Intent>
         override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
         ): View? {
-            return inflater.inflate(R.layout.fragment_three, container, false)
+            val binding = inflater.inflate(R.layout.fragment_three, container, false)
+            text = binding.findViewById<TextView>(R.id.fragment_textView)
+            // intent 선언
+            val intent: Intent = Intent(activity, ReDirectActivity::class.java)
+            text.setOnClickListener {
+                intent.putExtra("data", "데이터 지롱")
+                // 엑티비티로
+                requestLauncher.launch(intent)
+                Log.d("업버튼", "테스트")
+            }
+
+            // ActivityResultLauncher 초기화
+            requestLauncher = registerForActivityResult(
+                ActivityResultContracts.StartActivityForResult()
+            ) { result ->
+                // 엑티비티에서 리다이텍트 결과값
+                if (result.resultCode == Activity.RESULT_OK) {
+                    val data = result.data?.getStringExtra("result")
+                    if (!data.isNullOrEmpty()) {
+                        updateText(data)
+                    }
+                }
+            }
+
+            return binding.rootView
+
         }
+        // 텍스트 업데이트
+        private fun updateText(text: String) {
+            this.text.text = text
+        }
+
     }
 
     // 업버튼 클릭시 실행
